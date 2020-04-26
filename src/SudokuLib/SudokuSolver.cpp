@@ -33,7 +33,7 @@ static bool _solveHelper(SudokuBoard &boardState, vector<SudokuBoard> &solutions
     }
     
     bool foundAnySolutions = false;
-    array<bool, SudokuBoard::RowSize> available = boardState.possibleEntriesAt(x, y);
+    vector<bool> available = boardState.possibleEntriesAt(x, y);
     for (int i = 0; i < SudokuBoard::RowSize; ++i) {
         if (available[i]) {
             boardState.set(x, y, i+1);

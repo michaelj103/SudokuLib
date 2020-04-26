@@ -9,12 +9,14 @@
 #ifndef SudokuBoard_hpp
 #define SudokuBoard_hpp
 
-#include <array>
+#include <vector>
 #include <initializer_list>
+#include <iostream>
 
 class SudokuBoard {
 public:
     SudokuBoard(std::initializer_list<int>);
+    SudokuBoard();
     
     // get or set a position. 0 means empty
     int at(size_t col, size_t row) const;
@@ -25,11 +27,13 @@ public:
     static const size_t BoardSize = RowSize * RowSize;
     
     /// n is valid at the given position if array[n-1] == true. If the given position is filled, that is the only valid entry
-    std::array<bool, RowSize> possibleEntriesAt(size_t col, size_t row) const;
+    std::vector<bool> possibleEntriesAt(size_t col, size_t row) const;
     bool firstEmptySpace(size_t &col, size_t &row) const;
     
 private:
-    std::array<int, BoardSize> _board;
+    std::vector<int> _board;
 };
+
+std::ostream &operator<<(std::ostream &os, const SudokuBoard &board);
 
 #endif /* SudokuBoard_hpp */

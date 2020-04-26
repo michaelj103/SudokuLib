@@ -11,7 +11,7 @@
 
 using namespace std;
 
-SudokuBoard::SudokuBoard(std::initializer_list<int> list) {
+SudokuBoard::SudokuBoard(std::initializer_list<int> list): _board(81, 0) {
     assert(list.size() <= SudokuBoard::BoardSize);
     size_t i = 0;
     for (int x : list) {
@@ -19,6 +19,8 @@ SudokuBoard::SudokuBoard(std::initializer_list<int> list) {
         _board[i++] = x;
     }
 }
+
+SudokuBoard::SudokuBoard(): _board(81, 0) {}
 
 static size_t _indexOf(size_t col, size_t row) {
     assert(col < SudokuBoard::RowSize && row < SudokuBoard::RowSize);
@@ -36,16 +38,16 @@ void SudokuBoard::set(size_t col, size_t row, int val) {
     _board[idx] = val;
 }
 
-std::array<bool, SudokuBoard::RowSize> SudokuBoard::possibleEntriesAt(size_t col, size_t row) const {
+std::vector<bool> SudokuBoard::possibleEntriesAt(size_t col, size_t row) const {
     const int current = this->at(col, row);
     if (current != 0) {
-        array<bool, RowSize> valid;
+        vector<bool> valid(RowSize, false);
         valid[current-1] = true;
         return valid;
     }
     
     //Check row and col
-    array<bool, RowSize> excluded;
+    vector<bool> excluded(RowSize, false);
     for (size_t i = 0; i < RowSize; ++i) {
         //Exclude other values in the row
         int rowComp = at(col, i);
@@ -54,15 +56,15 @@ std::array<bool, SudokuBoard::RowSize> SudokuBoard::possibleEntriesAt(size_t col
         }
         
         //Exclude other values in the col
-        int colComp = at(i, col);
+        int colComp = at(i, row);
         if (colComp > 0) {
             excluded[colComp-1] = true;
         }
     }
     
     //Check the subsquare
-    const size_t baseCol = col / SubSquareSize;
-    const size_t baseRow = row / SubSquareSize;
+    const size_t baseCol = col - (col % SubSquareSize);
+    const size_t baseRow = row - (row % SubSquareSize);
     for (size_t rOff = 0; rOff < SubSquareSize; ++rOff) {
         for (size_t cOff = 0; cOff < SubSquareSize; ++cOff) {
             int comp = at(baseCol + cOff, baseRow + rOff);
@@ -92,3 +94,15 @@ bool SudokuBoard::firstEmptySpace(size_t &col, size_t &row) const {
     
     return false;
 }
+
+std::ostream &operator<<(std::ostream &os, const SudokuBoard &board) {
+    for (size_t row = 0; row < SudokuBoard::RowSize; ++row) {
+        for (size_t col = 0; col < SudokuBoard::RowSize; ++col) {
+            os << board.at(col, row);
+        }
+        os << "\n";
+    }
+    
+    return os;
+}
+
