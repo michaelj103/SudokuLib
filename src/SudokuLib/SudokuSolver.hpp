@@ -19,12 +19,12 @@ public:
     
     bool solve(size_t maxAllowedSolutions = 10);
     size_t solutionCount() const;
-    const std::vector<const SudokuBoard> &allSolutions() const;
+    const std::vector<SudokuBoard> &allSolutions() const;
     
 private:
     bool _solved;
     SudokuBoard _backingBoard;
-    std::vector<const SudokuBoard> _solutions;
+    std::vector<SudokuBoard> _solutions;
 };
 
 #endif /* SudokuSolver_hpp */

@@ -26,6 +26,7 @@ public:
     
     /// n is valid at the given position if array[n-1] == true. If the given position is filled, that is the only valid entry
     std::array<bool, RowSize> possibleEntriesAt(size_t col, size_t row) const;
+    bool firstEmptySpace(size_t &col, size_t &row) const;
     
 private:
     std::array<int, BoardSize> _board;

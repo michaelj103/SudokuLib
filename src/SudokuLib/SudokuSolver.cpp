@@ -18,18 +18,44 @@ size_t SudokuSolver::solutionCount() const {
     return _solutions.size();
 }
 
-const std::vector<const SudokuBoard> &SudokuSolver::allSolutions() const {
+const std::vector<SudokuBoard> &SudokuSolver::allSolutions() const {
     return _solutions;
 }
 
-void _solveHelper(SudokuBoard &boardState, vector<const SudokuBoard> &solutions, size_t maxAllowedSolutions) {
+static bool _solveHelper(SudokuBoard &boardState, vector<SudokuBoard> &solutions, size_t currentCol, size_t currentRow, size_t maxAllowedSolutions) {
+    //find the first empty square
+    size_t x = currentCol;
+    size_t y = currentRow;
+    if (!boardState.firstEmptySpace(x, y)) {
+        //No empty spaces left, current state is a solution
+        solutions.emplace_back(boardState);
+        return true;
+    }
     
+    bool foundAnySolutions = false;
+    array<bool, SudokuBoard::RowSize> available = boardState.possibleEntriesAt(x, y);
+    for (int i = 0; i < SudokuBoard::RowSize; ++i) {
+        if (available[i]) {
+            boardState.set(x, y, i+1);
+            bool solutionHere = _solveHelper(boardState, solutions, x, y, maxAllowedSolutions);
+            boardState.set(x, y, 0);
+            
+            if (solutionHere) {
+                foundAnySolutions = true;
+                if (solutions.size() >= maxAllowedSolutions) {
+                    break;
+                }
+            }
+        }
+    }
+    
+    return foundAnySolutions;
 }
 
 bool SudokuSolver::solve(size_t maxAllowedSolutions) {
     assert(maxAllowedSolutions > 0);
     _solutions.clear(); //clear in case of multiple calls
-    _solveHelper(_backingBoard, _solutions, maxAllowedSolutions);
+    _solveHelper(_backingBoard, _solutions, 0, 0, maxAllowedSolutions);
     _solved = true;
     return _solutions.size() > 0;
 }

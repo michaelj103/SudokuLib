@@ -78,3 +78,17 @@ std::array<bool, SudokuBoard::RowSize> SudokuBoard::possibleEntriesAt(size_t col
     }
     return excluded;
 }
+
+bool SudokuBoard::firstEmptySpace(size_t &col, size_t &row) const {
+    size_t start = _indexOf(col, row);
+    for (size_t i = start; i < _board.size(); ++i) {
+        if (_board[i] == 0) {
+            //found empty
+            col = i % RowSize;
+            row = i / RowSize;
+            return true;
+        }
+    }
+    
+    return false;
+}
